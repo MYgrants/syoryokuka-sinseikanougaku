@@ -1,0 +1,39 @@
+// GASのWebアプリURLをここに入れる
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-daTghZtGcuzTojp9wasvRrIIe01-xIuD7FaNLXpSpcBAK_rD8UsbkNprNgAA7Swe/exec';
+
+function saveData() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+
+  const industry = document.getElementById('industry');
+  const industryText = industry.options[industry.selectedIndex].text;
+
+  const data = {
+    industry: industryText,
+    employees: document.getElementById('employees').value || '',
+    sales: document.getElementById('sales').value || '',
+    applicationAmount: document.getElementById('applicationAmount').value || '',
+    sizeLabel: document.getElementById('sizeLabel').textContent,
+    maxExpense: document.getElementById('maxExpenseByEmp').textContent,
+    maxSubsidy: document.getElementById('maxSubsidyByEmp').textContent,
+    applicableAmount: window._applicable ? window._applicable + '万円' : ''
+  };
+
+  fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    btn.textContent = 'この診断結果を保存する';
+    btn.disabled = false;
+    const msg = document.getElementById('savedMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  }).catch(() => {
+    btn.textContent = 'この診断結果を保存する';
+    btn.disabled = false;
+    alert('保存に失敗しました。');
+  });
+}
